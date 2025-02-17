@@ -21,3 +21,6 @@ Thumbs.db
 # Ignore SQLite database file
 database.sqlite
 
+# Ignore test coverage folder
+coverage
+

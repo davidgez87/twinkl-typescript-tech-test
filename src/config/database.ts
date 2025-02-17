@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import sqlite3 from 'sqlite3'; // TODO - strange import error 'sqlite3' should be listed in the project's dependencies. It is installed as dependancy
+import sqlite3 from 'sqlite3';
 
 export const connectDB = () => new sqlite3.Database('./database.sqlite', (error: any) => {
   if (error) {
@@ -19,9 +18,9 @@ export const initializeDB = (): Promise<void> => new Promise((resolve, reject) =
       email_address TEXT UNIQUE NOT NULL,
       user_type TEXT CHECK(user_type IN ('student', 'teacher', 'parent', 'private tutor')) NOT NULL
     );
-  `, (err) => {
-    if (err) {
-      reject(err);
+  `, (error) => {
+    if (error) {
+      reject(error);
     } else {
       resolve();
     }
