@@ -15,7 +15,7 @@ export const initializeDB = (): Promise<void> => new Promise((resolve, reject) =
       full_name TEXT NOT NULL,
       password TEXT NOT NULL,
       created_date TEXT NOT NULL,
-      email_address TEXT UNIQUE NOT NULL,
+      email TEXT UNIQUE NOT NULL,
       user_type TEXT CHECK(user_type IN ('student', 'teacher', 'parent', 'private tutor')) NOT NULL
     );
   `, (error) => {
