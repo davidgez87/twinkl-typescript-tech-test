@@ -77,9 +77,8 @@ describe('validateSignUpRequest Middleware', () => {
 
     validateSignUpRequest(req, res as Response, mockNext);
 
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({
-      error: 'Internal server error',
-    });
+    expect(mockNext).toHaveBeenCalledWith(
+      new ApiError(500, 'Unexpected error'),
+    );
   });
 });

@@ -6,7 +6,7 @@ import { signUpSchema } from '../schemas/userSignup';
 import ApiError from '../errors/apiError';
 import formatZodErrors from '../utils/formatZodErrors';
 
-export const validateSignUpRequest = (
+const validateSignUpRequest = (
   req: Request<{}, {}, SignUpPayload>,
   res: Response,
   next: NextFunction,
@@ -16,10 +16,14 @@ export const validateSignUpRequest = (
     return next();
   } catch (error) {
     if (error instanceof ZodError) {
-      const formattedErrors = formatZodErrors(error);
-      return next(new ApiError(400, 'Validation failed', formattedErrors));
+      return next(new ApiError(400, 'Validation failed', formatZodErrors(error)));
     }
-    return res.status(500).json({ error: 'Internal server error' });
+
+    if (error instanceof Error) {
+      return next(new ApiError(500, error.message));
+    }
+
+    return next(new ApiError(500, 'Internal Server Error'));
   }
 };
 

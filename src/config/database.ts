@@ -1,28 +1,42 @@
-import sqlite3 from 'sqlite3';
+/* eslint-disable no-console */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { PrismaClient } from '@prisma/client';
+import ApiError from '../errors/apiError';
 
-export const connectDB = () => new sqlite3.Database('./database.sqlite', (error: any) => {
-  if (error) {
-    throw error;
-  }
-});
+const prisma = new PrismaClient();
 
-export const initializeDB = (): Promise<void> => new Promise((resolve, reject) => {
-  const db = connectDB();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const checkUsers = async () => {
+  try {
+    const tableInfo = await prisma.$queryRaw`
+      PRAGMA table_info('user');
+    `;
 
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      full_name TEXT NOT NULL,
-      password TEXT NOT NULL,
-      created_date TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      user_type TEXT CHECK(user_type IN ('student', 'teacher', 'parent', 'private tutor')) NOT NULL
-    );
-  `, (error) => {
-    if (error) {
-      reject(error);
+    console.log('Table Info:', tableInfo);
+
+    const users = await prisma.user.findMany();
+
+    if (users.length === 0) {
+      console.log('No users found in the database.');
     } else {
-      resolve();
+      console.log('Users found:', users);
     }
-  });
-});
+
+    return users;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw new Error('Error fetching users');
+  }
+};
+
+const initializeDB = async (): Promise<void> => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+
+    // checkUsers();
+  } catch (error) {
+    throw new ApiError(500, 'Error connecting to the database');
+  }
+};
+
+export { prisma, initializeDB };

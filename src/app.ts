@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
 import { initializeDB } from './config/database';
-import routes from './routes';
+import routes from './routes/apiRoutes';
 import errorHandler from './middleware/errorHandler';
 
 const app: Express = express();
