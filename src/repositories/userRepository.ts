@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { SignUpPayload } from '../types/payloads';
 import ApiError from '../errors/apiError';
+import logger from '../logger/pino';
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,8 @@ const userRepository = {
     createdDate,
     userType,
   }: SignUpPayload): Promise<void> => {
+    logger.info('Create user repository request received');
+
     try {
       await prisma.user.create({
         data: {
@@ -23,12 +26,16 @@ const userRepository = {
         },
       });
     } catch (error: any) {
+      logger.error({ error });
+
       throw new ApiError(500, error.message);
     }
   },
 
   getUserById: async (userId: number) => {
     try {
+      logger.info('Get user repository request received');
+
       const user = await prisma.user.findUnique({
         where: { userId },
         select: {
@@ -41,6 +48,8 @@ const userRepository = {
 
       return user;
     } catch (error: any) {
+      logger.error({ error });
+
       throw new ApiError(500, error.message);
     }
   },
