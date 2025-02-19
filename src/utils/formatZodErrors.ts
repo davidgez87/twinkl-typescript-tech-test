@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ZodError } from 'zod';
 
 const formatZodErrors = (error: ZodError) => {

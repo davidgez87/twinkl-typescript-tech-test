@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { z } from 'zod';
 
 const userTypeEnum = z.enum(['student', 'teacher', 'parent', 'private tutor']);

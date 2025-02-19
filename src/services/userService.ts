@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import bcrypt from 'bcrypt';
 import userRepository from '../repositories/userRepository';
 import { SignUpPayload } from '../types/payloads';
@@ -26,4 +25,12 @@ const signUpUserService = async ({
   }
 };
 
-export default signUpUserService;
+const userDetailsService = async (userId: number) => {
+  try {
+    return await userRepository.getUserById(userId);
+  } catch (error: any) {
+    throw new ApiError(500, error.message);
+  }
+};
+
+export { signUpUserService, userDetailsService };

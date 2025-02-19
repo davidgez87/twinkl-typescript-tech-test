@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { PrismaClient } from '@prisma/client';
 import { SignUpPayload } from '../types/payloads';
 import ApiError from '../errors/apiError';
@@ -23,6 +22,24 @@ const userRepository = {
           userType,
         },
       });
+    } catch (error: any) {
+      throw new ApiError(500, error.message);
+    }
+  },
+
+  getUserById: async (userId: number) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { userId },
+        select: {
+          fullName: true,
+          email: true,
+          createdDate: true,
+          userType: true,
+        },
+      });
+
+      return user;
     } catch (error: any) {
       throw new ApiError(500, error.message);
     }

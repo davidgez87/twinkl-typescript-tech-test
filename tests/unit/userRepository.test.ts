@@ -6,6 +6,7 @@ import { SignUpPayload } from '../../src/types/payloads';
 jest.mock('@prisma/client', () => {
   const mockUser = {
     create: jest.fn(),
+    findUnique: jest.fn(),
   };
 
   return {
@@ -15,15 +16,7 @@ jest.mock('@prisma/client', () => {
   };
 });
 
-describe('userRepository.createUser', () => {
-  const validSignUpData: SignUpPayload = {
-    fullName: 'John Doe',
-    email: 'john@example.com',
-    password: 'Password123',
-    createdDate: '2025-02-18',
-    userType: 'student',
-  };
-
+describe('userRepository', () => {
   let prisma: PrismaClient;
 
   beforeEach(() => {
@@ -34,30 +27,94 @@ describe('userRepository.createUser', () => {
     jest.clearAllMocks();
   });
 
-  it('should create a new user successfully', async () => {
-    const mockCreateUser = (prisma.user.create as jest.Mock);
+  describe('createUser', () => {
+    const validSignUpData: SignUpPayload = {
+      fullName: 'John Doe',
+      email: 'john@example.com',
+      password: 'Password123',
+      createdDate: '2025-02-18',
+      userType: 'student',
+    };
 
-    mockCreateUser.mockResolvedValue({
-      ...validSignUpData,
-      userId: 1,
+    it('should create a new user successfully', async () => {
+      const mockCreateUser = prisma.user.create as jest.Mock;
+
+      mockCreateUser.mockResolvedValue({
+        ...validSignUpData,
+        userId: 1,
+      });
+
+      await userRepository.createUser(validSignUpData);
+
+      expect(mockCreateUser).toHaveBeenCalledWith({
+        data: validSignUpData,
+      });
     });
 
-    await userRepository.createUser(validSignUpData);
+    it('should throw an ApiError if user creation fails', async () => {
+      const mockCreateUser = prisma.user.create as jest.Mock;
+      const errorMessage = 'Database error';
 
-    expect(mockCreateUser).toHaveBeenCalledWith({
-      data: validSignUpData,
+      mockCreateUser.mockRejectedValue(new Error(errorMessage));
+
+      await expect(userRepository.createUser(validSignUpData)).rejects.toThrow(
+        new ApiError(500, errorMessage),
+      );
     });
   });
 
-  it('should throw an ApiError if user creation fails', async () => {
-    const mockCreateUser = (prisma.user.create as jest.Mock);
+  describe('getUserById', () => {
+    it('should return user details when a valid userId is provided', async () => {
+      const mockUser = {
+        fullName: 'John Doe',
+        email: 'john@example.com',
+        createdDate: '2025-02-18',
+        userType: 'student',
+      };
 
-    const errorMessage = 'Database error';
+      const mockFindUnique = prisma.user.findUnique as jest.Mock;
+      mockFindUnique.mockResolvedValue(mockUser);
 
-    mockCreateUser.mockRejectedValue(new Error(errorMessage));
+      const user = await userRepository.getUserById(1);
 
-    await expect(userRepository.createUser(validSignUpData)).rejects.toThrow(
-      new ApiError(500, errorMessage),
-    );
+      expect(user).toEqual(mockUser);
+      expect(mockFindUnique).toHaveBeenCalledWith({
+        where: { userId: 1 },
+        select: {
+          fullName: true,
+          email: true,
+          createdDate: true,
+          userType: true,
+        },
+      });
+    });
+
+    it('should return null if user is not found', async () => {
+      const mockFindUnique = prisma.user.findUnique as jest.Mock;
+      mockFindUnique.mockResolvedValue(null);
+
+      const user = await userRepository.getUserById(999);
+
+      expect(user).toBeNull();
+      expect(mockFindUnique).toHaveBeenCalledWith({
+        where: { userId: 999 },
+        select: {
+          fullName: true,
+          email: true,
+          createdDate: true,
+          userType: true,
+        },
+      });
+    });
+
+    it('should throw an ApiError if fetching user fails', async () => {
+      const errorMessage = 'Database error';
+      const mockFindUnique = prisma.user.findUnique as jest.Mock;
+      mockFindUnique.mockRejectedValue(new Error(errorMessage));
+
+      await expect(userRepository.getUserById(1)).rejects.toThrow(
+        new ApiError(500, errorMessage),
+      );
+    });
   });
 });

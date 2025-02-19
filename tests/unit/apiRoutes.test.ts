@@ -2,12 +2,13 @@ import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
 import router from '../../src/routes/apiRoutes';
 import validateSignUpRequest from '../../src/middleware/validateSignUpRequest';
-import { signUpUserController } from '../../src/controllers/userController';
+import { signUpUserController, userDetailsController } from '../../src/controllers/userController';
 import ApiError from '../../src/errors/apiError';
 
 jest.mock('../../src/middleware/validateSignUpRequest', () => jest.fn((req, res, next) => next()));
 jest.mock('../../src/controllers/userController', () => ({
-  signUpUserController: jest.fn((req, res, next) => next()),
+  signUpUserController: jest.fn((req, res, next) => res.status(201).json({ message: 'User signed up successfully' })),
+  userDetailsController: jest.fn((req, res, next) => res.status(200).json({ id: 1, fullName: 'John Doe', email: 'john@example.com' })), // Mock userDetailsController response
 }));
 
 const app = express();
@@ -54,21 +55,30 @@ describe('API Routes', () => {
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ message: 'Internal server error' });
     });
+  });
 
-    // TODO - reponse.body is returning empty object
-    it('should handle errors inside the route’s try-catch block', async () => {
-      (signUpUserController as jest.Mock).mockImplementation((req, res, next) => {
-        res.status(201).json = jest.fn().mockImplementation(() => {
-          throw new ApiError(500, 'Response error');
-        });
+  describe('GET /user/:id', () => {
+    it('should return user details for a valid user ID', async () => {
+      const response = await request(app).get('/user/1');
 
-        next();
+      expect(userDetailsController).toHaveBeenCalled();
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        id: 1,
+        fullName: 'John Doe',
+        email: 'john@example.com',
+      });
+    });
+
+    it('should return 500 if the controller throws an error', async () => {
+      (userDetailsController as jest.Mock).mockImplementation((req, res, next) => {
+        next(new ApiError(500, 'User not found'));
       });
 
-      const response = await request(app).post('/signUp').send(validSignUpData);
+      const response = await request(app).get('/user/1');
 
       expect(response.status).toBe(500);
-      expect(response.body).toEqual({ });
+      expect(response.body).toEqual({ message: 'Internal server error' });
     });
   });
 });

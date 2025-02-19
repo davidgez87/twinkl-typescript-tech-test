@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ZodError } from 'zod';
 import { SignUpPayload } from '../types/payloads';
 import { signUpSchema } from '../schemas/userSignup';
