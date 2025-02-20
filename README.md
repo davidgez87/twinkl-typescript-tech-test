@@ -6,6 +6,9 @@
 
 ## Task
 
+[View API Documentation](https://davidgez87.github.io/twinkl-typescript-tech-test/swagger/)
+
+
 Your task is to implement a backend API (no front-end is required).
 
 These are the requirements for the system:
