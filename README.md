@@ -163,6 +163,19 @@ curl -X POST http://localhost:3000/signUp \
   }'
 ```
 
+400 - Email already exists
+```
+curl -X POST http://localhost:3000/signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "David Geraghty",
+    "email": "davidgeraghty@example.com",
+    "password": "Password123",
+    "createdDate": "18-01-2025",
+    "userType": "student"
+  }'
+```
+
 #### User Details
 
 200 - if user has been created

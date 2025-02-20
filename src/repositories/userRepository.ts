@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { SignUpPayload } from '../types/payloads';
 import ApiError from '../errors/apiError';
 
@@ -8,6 +9,12 @@ const createUser = async (data: SignUpPayload) => {
   try {
     await prisma.user.create({ data });
   } catch (error: any) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002' && Array.isArray(error.meta?.target) && error.meta.target.includes('email')) {
+        throw new ApiError(400, 'Email is already taken');
+      }
+    }
+
     throw new ApiError(500, error.message);
   }
 };

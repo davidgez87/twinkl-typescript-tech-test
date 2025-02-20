@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { createUser, getUserById } from '../../src/repositories/userRepository';
 import ApiError from '../../src/errors/apiError';
 import { SignUpPayload } from '../../src/types/payloads';
@@ -49,6 +50,21 @@ describe('userRepository', () => {
       expect(mockCreateUser).toHaveBeenCalledWith({
         data: validSignUpData,
       });
+    });
+
+    it('should throw an ApiError if email is already taken', async () => {
+      const mockCreateUser = prisma.user.create as jest.Mock;
+
+      const uniqueConstraintError = new PrismaClientKnownRequestError(
+        'Unique constraint failed',
+        { code: 'P2002', meta: { target: ['email'] }, clientVersion: '4.0.0' },
+      );
+
+      mockCreateUser.mockRejectedValue(uniqueConstraintError);
+
+      await expect(createUser(validSignUpData)).rejects.toThrow(
+        new ApiError(400, 'Email is already taken'),
+      );
     });
 
     it('should throw an ApiError if user creation fails', async () => {
