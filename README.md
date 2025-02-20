@@ -70,7 +70,7 @@ The server will start at `http://localhost:3000` by default. You can change the 
 - [pino](https://www.npmjs.com/package/pino): Very low overhead Node.js logger.
 - [zod](https://www.npmjs.com/package/zod): TypeScript-first schema validation with static type inference. 
 - [prisma client](https://www.npmjs.com/package/@prisma/client): Prisma Client JS is an auto-generated query builder that enables type-safe database access and reduces boilerplate. 
-- [crypto-js](https://www.npmjs.com/package/crypto-js): Prisma Client JS is an auto-generated query builder that enables type-safe database access and reduces boilerplate. 
+- [node crypto module](https://nodejs.org/api/crypto.html): The node:crypto module provides cryptographic functionality that includes a set of wrappers for OpenSSL's hash, HMAC, cipher, decipher, sign, and verify functions. 
 
 
 ### Testing
@@ -188,7 +188,7 @@ curl -X GET http://localhost:3000/user/1
 curl -X GET http://localhost:3000/user/notARequestParam
 ```
 
-404 - if user has not been created
+500 - if user has not been created
 ```
 curl -X GET http://localhost:3000/user/10
 ```

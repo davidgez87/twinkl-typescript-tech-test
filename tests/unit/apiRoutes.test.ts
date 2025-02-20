@@ -8,7 +8,7 @@ import ApiError from '../../src/errors/apiError';
 jest.mock('../../src/middleware/validateRequest', () => jest.fn((req, res, next) => next()));
 jest.mock('../../src/controllers/userController', () => ({
   signUpUserController: jest.fn((req, res, next) => res.status(201).json({ message: 'User signed up successfully' })),
-  userDetailsController: jest.fn((req, res, next) => res.status(200).json({ id: 1, fullName: 'John Doe', email: 'john@example.com' })), // Mock userDetailsController response
+  userDetailsController: jest.fn((req, res, next) => res.status(200).json({ id: 1, fullName: 'John Doe', email: 'john@example.com' })),
 }));
 
 const app = express();
