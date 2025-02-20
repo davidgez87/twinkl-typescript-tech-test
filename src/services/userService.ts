@@ -45,7 +45,7 @@ const userDetailsService = async (userId: number): Promise<UserDetailsReponse> =
   } catch (error: any) {
     logger.error({ error });
 
-    throw new ApiError(500, error.message);
+    throw new ApiError(error.statusCode, error.message);
   }
 };
 

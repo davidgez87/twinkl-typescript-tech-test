@@ -188,7 +188,7 @@ curl -X GET http://localhost:3000/user/1
 curl -X GET http://localhost:3000/user/notARequestParam
 ```
 
-500 - if user has not been created
+404 - if user has not been created
 ```
 curl -X GET http://localhost:3000/user/10
 ```

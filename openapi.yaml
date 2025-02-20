@@ -117,6 +117,16 @@ paths:
                   message:
                     type: string
                     example: "Validation failed"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found"
         "500":
           description: Internal server error
           content:

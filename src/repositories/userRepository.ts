@@ -33,7 +33,7 @@ const getUserById = async (userId: number): Promise<DatabaseResponse | null> => 
       },
     });
   } catch (error: any) {
-    throw new ApiError(500, error.message);
+    throw new ApiError(error.statusCode, error.message);
   }
 };
 
