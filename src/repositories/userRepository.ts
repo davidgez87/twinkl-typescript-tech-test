@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { SignUpPayload } from '../types/payloads';
+import { SignUpPayload } from '../types/request';
+import { DatabaseResponse } from '../types/response';
 import ApiError from '../errors/apiError';
 
 const prisma = new PrismaClient();
 
-const createUser = async (data: SignUpPayload) => {
+const createUser = async (data: SignUpPayload): Promise<void> => {
   try {
     await prisma.user.create({ data });
   } catch (error: any) {
@@ -19,7 +20,7 @@ const createUser = async (data: SignUpPayload) => {
   }
 };
 
-const getUserById = async (userId: number) => {
+const getUserById = async (userId: number): Promise<DatabaseResponse | null> => {
   try {
     return await prisma.user.findUnique({
       where: { userId },

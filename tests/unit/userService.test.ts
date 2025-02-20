@@ -1,7 +1,7 @@
 import { signUpUserService, userDetailsService } from '../../src/services/userService';
 import { createUser, getUserById } from '../../src/repositories/userRepository';
 import ApiError from '../../src/errors/apiError';
-import { SignUpPayload } from '../../src/types/payloads';
+import { SignUpPayload } from '../../src/types/request';
 import { encryptData, decryptData } from '../../src/utils/encryption';
 
 jest.mock('../../src/repositories/userRepository');

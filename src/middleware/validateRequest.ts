@@ -6,7 +6,7 @@ import ApiError from '../errors/apiError';
 import formatZodErrors from '../utils/formatZodErrors';
 import logger from '../logger/pino';
 
-const validateRequest = (req: Request, res: Response, next: NextFunction) => {
+const validateRequest = (req: Request, res: Response, next: NextFunction): void => {
   try {
     logger.info('Validating request');
 

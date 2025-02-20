@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { app, initializeApp } from '../../src/app';
 import { signUpUserService, userDetailsService } from '../../src/services/userService';
-import { SignUpPayload } from '../../src/types/payloads';
+import { SignUpPayload } from '../../src/types/request';
 import { prisma } from '../../src/config/database';
 
 jest.mock('../../src/services/userService');

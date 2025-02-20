@@ -1,5 +1,6 @@
 import { createUser, getUserById } from '../repositories/userRepository';
-import { SignUpPayload } from '../types/payloads';
+import { SignUpPayload } from '../types/request';
+import { UserDetailsReponse } from '../types/response';
 import ApiError from '../errors/apiError';
 import logger from '../logger/pino';
 import { encryptData, decryptData } from '../utils/encryption';
@@ -26,7 +27,7 @@ const signUpUserService = async ({
   }
 };
 
-const userDetailsService = async (userId: number) => {
+const userDetailsService = async (userId: number): Promise<UserDetailsReponse> => {
   try {
     logger.info('User details service request received');
 

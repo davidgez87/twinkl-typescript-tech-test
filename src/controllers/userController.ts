@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { signUpUserService, userDetailsService } from '../services/userService';
-import { SignUpPayload } from '../types/payloads';
+import { SignUpPayload } from '../types/request';
 import logger from '../logger/pino';
 
-export const signUpUserController = async (req: Request, res: Response, next: NextFunction) => {
+// eslint-disable-next-line max-len
+export const signUpUserController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     logger.info({ user: req.body }, 'Sign up Controller request received');
 
@@ -23,7 +24,8 @@ export const signUpUserController = async (req: Request, res: Response, next: Ne
   }
 };
 
-export const userDetailsController = async (req: Request, res: Response, next: NextFunction) => {
+// eslint-disable-next-line max-len
+export const userDetailsController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     logger.info({ user_id: req.params.id }, 'User details controller request received');
 

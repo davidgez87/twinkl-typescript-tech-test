@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import ApiError from '../errors/apiError';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const errorHandler = (err: ApiError, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (err: ApiError, req: Request, res: Response, next: NextFunction): Response => {
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json(err.toJSON());
   }
