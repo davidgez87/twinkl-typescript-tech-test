@@ -1,41 +1,36 @@
 # Twinkl TypeScript Test
 
-- [Task](#task)
-- [Development Environment Setup](#setup)
-- [What we are looking for](#what-we-are-looking-for)
+- [Description](#description)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Packages](#packages)
+- [Testing](#testing)
 
-## Task
+### Description
+This project is a TypeScript-based Express.js API designed to handle user authentication and data retrieval. It uses Prisma as an ORM for database interactions, ensuring type safety and scalability. The API includes validation with Zod, logging with Pino, and follows best practices for testing with Jest and Supertest.
 
-[View API Documentation](https://davidgez87.github.io/twinkl-typescript-tech-test/swagger/)
+- User Processing – Secure user sign-up and data retrieval
+- Express.js Framework – Lightweight and efficient API structure
+- Prisma ORM – Simplified database management with type safety
+- Zod Validation – Ensures request data integrity
+- Comprehensive Testing – Jest and Supertest for unit testing
+- Logging – Uses Pino for high-performance logging
 
-
-Your task is to implement a backend API (no front-end is required).
-
-These are the requirements for the system:
-
-1. User Signup Endpoint
-    1. A `POST` endpoint, that accepts JSON, containing the user full name, password, email address, created date, and the user type (one of a student, teacher, parent or private tutor).
-    1. Validation. The app should check that the fields submitted are not empty. The app should also check that the password matches the following rules:
-        1. Between 8 and 64 characters
-        1. Must contain at least one digit (0-9)
-        1. Must contain at least one lowercase letter (a-z)
-        1. Must contain at least one uppercase letter (A-Z)
-    1. When validation fails the app should return an appropriate status code with error/s that can be used by the client
-1. Save the signup information to a data store. We recommend an in-memory data store (i.e an array) or a lightweight file database like SQLLite.
-1. User Signup Details
-    1. A `GET` endpoint that takes a user ID and returns the user details as JSON.
-1. Create whatever level of testing and documentation you consider appropriate
-
-## What we are looking for
-
-* Submit something that we can run locally
-* Commiting changes with good messages as you go is very helpful
-* You can update the README or add a NOTES.md detailing any decisions/tradeoffs you made, or changes you would make with more time
-* Clean, secure, modular code written to your own standards of what good looks like. Add concise comments in the code if you want to explain a decision. 
-* Pragmatism. We are not looking for complex solutions, and there is no hidden trick requirement in our task ;) 
-* Feel free to install and use additional packages
-
-## Setup
+### Architecture
+| Folder            | Layer         | Purpose                                               |
+|-------------------|---------------|-------------------------------------------------------|
+| src               | Core files    | Entry point for the app                               |
+| src/config        | Configuration | Handles DB connection                                 |
+| src/routes        | Routing       | Defines endpoints and maps to controllers             |
+| src/controllers   | Controller    | Handles requests, calls services and returns responses|
+| src/services      | Service       | Implements business logic, calls repositorys          |
+| src/repositories  | Repository    | DB interactions                                       |
+| src/middleware    | Middleware    | Handles validation and error handling                 |
+| src/untils        | Utilities     | Helper functions                                      |
+| tests/unit        | Testing       | Contains unit tests                                   |
+| prisma            | ORM           | Stores schema & migration files                       |
 
 ### Prerequisites
 
@@ -45,22 +40,6 @@ Before you begin, ensure you have the following installed on your machine:
 - [npm](https://www.npmjs.com/): npm is the package manager for Node.js and comes with the Node.js installation.
 
 ### Installation
-
-This will install a basic [Express](https://expressjs.com/) app with Typescript.
-
-If you have been provided with a Github URL, clone the repository to your local machine:
-
-```
-git clone https://github.com/twinkltech/twinkl-typescript-tech-test.git
-```
-
-If you have been provided with a zip file, download to your computer and unzip.
-
-Navigate to the directory:
-
-```
-cd twinkl-typescript-tech-test
-```
 
 Install the dependencies:
 
@@ -76,14 +55,6 @@ In development the following command will start the server and use `nodemon` to 
 npm run dev
 ```
 
-The server will start at `http://localhost:3000` by default. You can change the port in `src/index.ts` 
-
-There are no tests in the project at the moment, but a command is available to run:
-
-```
-npm run test
-```
-
 There are also commands to build and start a server without nodemon:
 
 ```
@@ -91,3 +62,120 @@ npm run build
 npm start
 ```
 
+The server will start at `http://localhost:3000` by default. You can change the port in `src/index.ts` 
+
+### Packages
+
+- [express](https://www.npmjs.com/package/express): is a fast, unopinionated, minimalist web framework for Node.js. It simplifies routing, middleware handling, and HTTP request/response management.
+- [pino](https://www.npmjs.com/package/pino): Very low overhead Node.js logger.
+- [zod](https://www.npmjs.com/package/zod): TypeScript-first schema validation with static type inference. 
+- [prisma client](https://www.npmjs.com/package/@prisma/client): Prisma Client JS is an auto-generated query builder that enables type-safe database access and reduces boilerplate. 
+- [crypto-js](https://www.npmjs.com/package/crypto-js): Prisma Client JS is an auto-generated query builder that enables type-safe database access and reduces boilerplate. 
+
+
+### Testing
+To run the unit tests a command is available to run:
+
+```
+npm run test
+```
+
+To view the api in the swagger editor navigate to [swagger editor](https://editor.swagger.io/) and copy and paste the contents of openapi.yaml located at the route of the repo
+
+To manual test via curl you can use the following commands in a terminal
+
+#### Sign Up
+201 
+```
+curl -X POST http://localhost:3000/signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "David Geraghty",
+    "email": "davidgeraghty@example.com",
+    "password": "Password123",
+    "createdDate": "18-01-2025",
+    "userType": "student"
+  }'
+```
+
+400 - Missing full name
+```
+curl -X POST http://localhost:3000/signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "",
+    "email": "davidgeraghty@example.com",
+    "password": "Password123",
+    "createdDate": "18-01-2025",
+    "userType": "not a valid user type"
+  }'
+```
+
+400 - Invalid email
+```
+curl -X POST http://localhost:3000/signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "David Geraghty",
+    "email": "Not an email",
+    "password": "Password123",
+    "createdDate": "18-01-2025",
+    "userType": "student"
+  }'
+```
+
+400 - Invalid password
+```
+curl -X POST http://localhost:3000/signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "David Geraghty",
+    "email": "david@email.com",
+    "password": "pass",
+    "createdDate": "18-01-2025",
+    "userType": "student"
+  }'
+```
+
+400 - Missing created date
+```
+curl -X POST http://localhost:3000/signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "David Geraghty",
+    "email": "david@email.com",
+    "password": "Password123",
+    "createdDate": "",
+    "userType": "student"
+  }'
+```
+
+400 - Invalid user type
+```
+curl -X POST http://localhost:3000/signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullName": "",
+    "email": "davidgeraghty@example.com",
+    "password": "Password123",
+    "createdDate": "18-01-2025",
+    "userType": "not a valid user type"
+  }'
+```
+
+#### User Details
+
+200 - if user has been created
+```
+curl -X GET http://localhost:3000/user/1
+```
+
+400 - invalid request param
+```
+curl -X GET http://localhost:3000/user/notARequestParam
+```
+
+404 - if user has not been created
+```
+curl -X GET http://localhost:3000/user/10
+```

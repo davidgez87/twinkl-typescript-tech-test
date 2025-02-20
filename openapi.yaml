@@ -21,15 +21,15 @@ paths:
               properties:
                 fullName:
                   type: string
-                  example: "John Doe"
+                  example: "David Geraghty"
                 email:
                   type: string
                   format: email
-                  example: "john@example.com"
+                  example: "david@example.com"
                 password:
                   type: string
                   format: password
-                  example: "password123"
+                  example: "Password123"
                 createdDate:
                   type: string
                   format: date
@@ -62,6 +62,19 @@ paths:
                   message:
                     type: string
                     example: "Validation failed"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Internal server error"
 
   /user/{id}:
     get:
@@ -87,10 +100,23 @@ paths:
                     example: 1
                   fullName:
                     type: string
-                    example: "John Doe"
+                    example: "David Geraghty"
                   email:
                     type: string
-                    example: "john@example.com"
+                    example: "david@example.com"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Validation failed"
         "404":
           description: User not found
           content:
@@ -101,3 +127,16 @@ paths:
                   message:
                     type: string
                     example: "User not found"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Internal server error"
