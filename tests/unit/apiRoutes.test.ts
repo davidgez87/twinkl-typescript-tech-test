@@ -1,11 +1,11 @@
 import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
 import router from '../../src/routes/apiRoutes';
-import validateSignUpRequest from '../../src/middleware/validateSignUpRequest';
+import validateSignUpRequest from '../../src/middleware/validateRequest';
 import { signUpUserController, userDetailsController } from '../../src/controllers/userController';
 import ApiError from '../../src/errors/apiError';
 
-jest.mock('../../src/middleware/validateSignUpRequest', () => jest.fn((req, res, next) => next()));
+jest.mock('../../src/middleware/validateRequest', () => jest.fn((req, res, next) => next()));
 jest.mock('../../src/controllers/userController', () => ({
   signUpUserController: jest.fn((req, res, next) => res.status(201).json({ message: 'User signed up successfully' })),
   userDetailsController: jest.fn((req, res, next) => res.status(200).json({ id: 1, fullName: 'John Doe', email: 'john@example.com' })), // Mock userDetailsController response
@@ -58,9 +58,10 @@ describe('API Routes', () => {
   });
 
   describe('GET /user/:id', () => {
-    it('should return user details for a valid user ID', async () => {
+    it('should call validation middleware and controller, then return 200', async () => {
       const response = await request(app).get('/user/1');
 
+      expect(validateSignUpRequest).toHaveBeenCalled();
       expect(userDetailsController).toHaveBeenCalled();
       expect(response.status).toBe(200);
       expect(response.body).toEqual({

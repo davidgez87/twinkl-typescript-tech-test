@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const userTypeEnum = z.enum(['student', 'teacher', 'parent', 'private tutor']);
 
-export const signUpSchema = z.object({
+const signUpSchema = z.object({
   fullName: z.string().min(1, { message: 'Full name is required' }),
   email: z.string().email({ message: 'Invalid email address' }),
   password: z

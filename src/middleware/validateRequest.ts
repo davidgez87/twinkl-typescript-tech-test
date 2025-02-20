@@ -1,32 +1,32 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import { SignUpPayload } from '../types/payloads';
-import { signUpSchema } from '../schemas/userSignup';
+import signUpSchema from '../schemas/userSignup';
+import userDetailsSchema from '../schemas/userDetails';
 import ApiError from '../errors/apiError';
 import formatZodErrors from '../utils/formatZodErrors';
 import logger from '../logger/pino';
 
-const validateSignUpRequest = (
-  req: Request<{}, {}, SignUpPayload>,
-  res: Response,
-  next: NextFunction,
-) => {
+const validateRequest = (req: Request, res: Response, next: NextFunction) => {
   try {
-    logger.info('Validating signup request');
+    logger.info('Validating request');
 
-    signUpSchema.parse(req.body);
+    if (req.method === 'POST') {
+      signUpSchema.parse(req.body);
+    }
+
+    if (req.method === 'GET') {
+      userDetailsSchema.parse(req.params);
+    }
 
     return next();
   } catch (error) {
     if (error instanceof ZodError) {
       logger.error({ error });
-
       return next(new ApiError(400, 'Validation failed', formatZodErrors(error)));
     }
 
     if (error instanceof Error) {
       logger.error({ error });
-
       return next(new ApiError(500, error.message));
     }
 
@@ -34,4 +34,4 @@ const validateSignUpRequest = (
   }
 };
 
-export default validateSignUpRequest;
+export default validateRequest;
