@@ -1,11 +1,11 @@
-import bcrypt from 'bcrypt';
 import { signUpUserService, userDetailsService } from '../../src/services/userService';
-import userRepository from '../../src/repositories/userRepository';
+import { createUser, getUserById } from '../../src/repositories/userRepository';
 import ApiError from '../../src/errors/apiError';
 import { SignUpPayload } from '../../src/types/payloads';
+import { encryptData, decryptData } from '../../src/utils/encryption';
 
-jest.mock('bcrypt');
 jest.mock('../../src/repositories/userRepository');
+jest.mock('../../src/utils/encryption');
 
 describe('signUpUserService', () => {
   const validSignUpData: SignUpPayload = {
@@ -16,25 +16,28 @@ describe('signUpUserService', () => {
     userType: 'student',
   };
 
-  it('should successfully hash the password and create the user', async () => {
-    const hashedPassword = 'hashedPassword';
+  it('should successfully encrypt the password and create the user', async () => {
+    const encryptedPassword = 'encryptedPassword';
 
-    (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
-    (userRepository.createUser as jest.Mock).mockResolvedValue(undefined);
+    (encryptData as jest.Mock).mockReturnValue(encryptedPassword);
+
+    (createUser as jest.Mock).mockResolvedValue(undefined);
 
     await signUpUserService(validSignUpData);
 
-    expect(bcrypt.hash).toHaveBeenCalledWith(validSignUpData.password, 10);
-    expect(userRepository.createUser).toHaveBeenCalledWith({
+    expect(encryptData).toHaveBeenCalledWith(validSignUpData.password);
+    expect(createUser).toHaveBeenCalledWith({
       ...validSignUpData,
-      password: hashedPassword,
+      password: encryptedPassword,
     });
   });
 
-  it('should throw an ApiError when there is an error during password hashing', async () => {
-    const errorMessage = 'Error hashing password';
+  it('should throw an ApiError when there is an error during password encryption', async () => {
+    const errorMessage = 'Error encrypting password';
 
-    (bcrypt.hash as jest.Mock).mockRejectedValue(new Error(errorMessage));
+    (encryptData as jest.Mock).mockImplementation(() => {
+      throw new Error(errorMessage);
+    });
 
     await expect(signUpUserService(validSignUpData)).rejects.toThrow(
       new ApiError(500, errorMessage),
@@ -42,12 +45,13 @@ describe('signUpUserService', () => {
   });
 
   it('should throw an ApiError when userRepository.createUser fails', async () => {
-    const hashedPassword = 'hashedPassword';
+    const encryptedPassword = 'encryptedPassword';
 
-    (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
+    (encryptData as jest.Mock).mockReturnValue(encryptedPassword);
+
     const createUserErrorMessage = 'Error creating user';
 
-    (userRepository.createUser as jest.Mock).mockRejectedValue(new Error(createUserErrorMessage));
+    (createUser as jest.Mock).mockRejectedValue(new Error(createUserErrorMessage));
 
     await expect(signUpUserService(validSignUpData)).rejects.toThrow(
       new ApiError(500, createUserErrorMessage),
@@ -58,23 +62,35 @@ describe('signUpUserService', () => {
 describe('userDetailsService', () => {
   it('should return user details when a valid userId is provided', async () => {
     const mockUser = {
-      id: 1,
+      userId: 1,
       fullName: 'John Doe',
       email: 'john@example.com',
+      password: 'encryptedPassword',
+      createdDate: '2025-02-18',
+      userType: 'student',
     };
 
-    (userRepository.getUserById as jest.Mock).mockResolvedValue(mockUser);
+    (decryptData as jest.Mock).mockReturnValue('Password123');
+
+    (getUserById as jest.Mock).mockResolvedValue(mockUser);
 
     const user = await userDetailsService(1);
 
-    expect(user).toEqual(mockUser);
-    expect(userRepository.getUserById).toHaveBeenCalledWith(1);
+    expect(user).toEqual({
+      full_name: mockUser.fullName,
+      password: 'Password123',
+      email: mockUser.email,
+      created_date: mockUser.createdDate,
+      user_type: mockUser.userType,
+    });
+    expect(getUserById).toHaveBeenCalledWith(1);
+    expect(decryptData).toHaveBeenCalledWith(mockUser.password);
   });
 
   it('should throw an ApiError when userRepository.getUserById fails', async () => {
     const errorMessage = 'Database error';
 
-    (userRepository.getUserById as jest.Mock).mockRejectedValue(new Error(errorMessage));
+    (getUserById as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
     await expect(userDetailsService(1)).rejects.toThrow(new ApiError(500, errorMessage));
   });

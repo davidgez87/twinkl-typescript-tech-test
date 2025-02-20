@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import userRepository from '../../src/repositories/userRepository';
+import { createUser, getUserById } from '../../src/repositories/userRepository';
 import ApiError from '../../src/errors/apiError';
 import { SignUpPayload } from '../../src/types/payloads';
 
@@ -44,7 +44,7 @@ describe('userRepository', () => {
         userId: 1,
       });
 
-      await userRepository.createUser(validSignUpData);
+      await createUser(validSignUpData);
 
       expect(mockCreateUser).toHaveBeenCalledWith({
         data: validSignUpData,
@@ -57,7 +57,7 @@ describe('userRepository', () => {
 
       mockCreateUser.mockRejectedValue(new Error(errorMessage));
 
-      await expect(userRepository.createUser(validSignUpData)).rejects.toThrow(
+      await expect(createUser(validSignUpData)).rejects.toThrow(
         new ApiError(500, errorMessage),
       );
     });
@@ -75,13 +75,14 @@ describe('userRepository', () => {
       const mockFindUnique = prisma.user.findUnique as jest.Mock;
       mockFindUnique.mockResolvedValue(mockUser);
 
-      const user = await userRepository.getUserById(1);
+      const user = await getUserById(1);
 
       expect(user).toEqual(mockUser);
       expect(mockFindUnique).toHaveBeenCalledWith({
         where: { userId: 1 },
         select: {
           fullName: true,
+          password: true,
           email: true,
           createdDate: true,
           userType: true,
@@ -93,13 +94,14 @@ describe('userRepository', () => {
       const mockFindUnique = prisma.user.findUnique as jest.Mock;
       mockFindUnique.mockResolvedValue(null);
 
-      const user = await userRepository.getUserById(999);
+      const user = await getUserById(999);
 
       expect(user).toBeNull();
       expect(mockFindUnique).toHaveBeenCalledWith({
         where: { userId: 999 },
         select: {
           fullName: true,
+          password: true,
           email: true,
           createdDate: true,
           userType: true,
@@ -112,7 +114,7 @@ describe('userRepository', () => {
       const mockFindUnique = prisma.user.findUnique as jest.Mock;
       mockFindUnique.mockRejectedValue(new Error(errorMessage));
 
-      await expect(userRepository.getUserById(1)).rejects.toThrow(
+      await expect(getUserById(1)).rejects.toThrow(
         new ApiError(500, errorMessage),
       );
     });

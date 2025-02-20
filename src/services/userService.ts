@@ -1,27 +1,24 @@
-import bcrypt from 'bcrypt';
-import userRepository from '../repositories/userRepository';
+import { createUser, getUserById } from '../repositories/userRepository';
 import { SignUpPayload } from '../types/payloads';
 import ApiError from '../errors/apiError';
 import logger from '../logger/pino';
+import { encryptData, decryptData } from '../utils/encryption';
 
 const signUpUserService = async ({
-  fullName,
-  email,
-  password,
-  createdDate,
-  userType,
+  fullName, email, password, createdDate, userType,
 }: SignUpPayload): Promise<void> => {
   try {
     logger.info('Sign up service request received');
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    await userRepository.createUser({
+    const userData = {
       fullName,
       email,
-      password: hashedPassword,
+      password: encryptData(password),
       createdDate,
       userType,
-    });
+    };
+
+    await createUser(userData);
   } catch (error: any) {
     logger.error({ error });
 
@@ -33,7 +30,17 @@ const userDetailsService = async (userId: number) => {
   try {
     logger.info('User details service request received');
 
-    return await userRepository.getUserById(userId);
+    const user = await getUserById(userId);
+
+    if (!user) throw new ApiError(404, 'User not found');
+
+    return {
+      full_name: user.fullName,
+      password: decryptData(user.password),
+      email: user.email,
+      created_date: user.createdDate,
+      user_type: user.userType,
+    };
   } catch (error: any) {
     logger.error({ error });
 
