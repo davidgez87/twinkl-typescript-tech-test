@@ -1,8 +1,8 @@
 import request from 'supertest';
-import { app, initializeApp } from '../../src/app';
-import { signUpUserService, userDetailsService } from '../../src/services/userService';
-import { SignUpPayload } from '../../src/types/request';
-import { prisma } from '../../src/config/database';
+import { app, initializeApp } from '../app';
+import { signUpUserService, userDetailsService } from '../services/userService';
+import { SignUpPayload } from '../types/request';
+import { prisma } from '../config/database';
 
 jest.mock('../../src/services/userService');
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import ApiError from '../../src/errors/apiError';
-import errorHandler from '../../src/middleware/errorHandler';
+import ApiError from '../errors/apiError';
+import errorHandler from './errorHandler';
 
 const mockRequest = {} as Request;
 const mockResponse = () => {

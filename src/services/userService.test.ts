@@ -1,8 +1,8 @@
-import { signUpUserService, userDetailsService } from '../../src/services/userService';
-import { createUser, getUserById } from '../../src/repositories/userRepository';
-import ApiError from '../../src/errors/apiError';
-import { SignUpPayload } from '../../src/types/request';
-import { encryptData, decryptData } from '../../src/utils/encryption';
+import { signUpUserService, userDetailsService } from './userService';
+import { createUser, getUserById } from '../repositories/userRepository';
+import ApiError from '../errors/apiError';
+import { SignUpPayload } from '../types/request';
+import { encryptData, decryptData } from '../utils/encryption';
 
 jest.mock('../../src/repositories/userRepository');
 jest.mock('../../src/utils/encryption');

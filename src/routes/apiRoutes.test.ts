@@ -1,9 +1,9 @@
 import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
-import router from '../../src/routes/apiRoutes';
-import validateSignUpRequest from '../../src/middleware/validateRequest';
-import { signUpUserController, userDetailsController } from '../../src/controllers/userController';
-import ApiError from '../../src/errors/apiError';
+import router from './apiRoutes';
+import validateSignUpRequest from '../middleware/validateRequest';
+import { signUpUserController, userDetailsController } from '../controllers/userController';
+import ApiError from '../errors/apiError';
 
 jest.mock('../../src/middleware/validateRequest', () => jest.fn((req, res, next) => next()));
 jest.mock('../../src/controllers/userController', () => ({

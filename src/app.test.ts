@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import request from 'supertest';
-import { app, initializeApp } from '../../src/app';
-import { initializeDB } from '../../src/config/database';
+import { app, initializeApp } from './app';
+import { initializeDB } from './config/database';
 
-jest.mock('../../src/config/database', () => ({
+jest.mock('./config/database', () => ({
   initializeDB: jest.fn(),
 }));
 

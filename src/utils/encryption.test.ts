@@ -1,4 +1,4 @@
-import { encryptData, decryptData } from '../../src/utils/encryption';
+import { encryptData, decryptData } from './encryption';
 
 describe('encryptionUtils', () => {
   const sampleText = 'Hello, World!';

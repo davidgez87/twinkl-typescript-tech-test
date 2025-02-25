@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import validateRequest from '../../src/middleware/validateRequest';
-import signUpSchema from '../../src/schemas/userSignup';
-import userDetailsSchema from '../../src/schemas/userDetails';
-import ApiError from '../../src/errors/apiError';
-import * as formatZodErrors from '../../src/utils/formatZodErrors';
+import validateRequest from './validateRequest';
+import signUpSchema from '../schemas/userSignup';
+import userDetailsSchema from '../schemas/userDetails';
+import ApiError from '../errors/apiError';
+import * as formatZodErrors from '../utils/formatZodErrors';
 
 const mockNext = jest.fn() as NextFunction;
 

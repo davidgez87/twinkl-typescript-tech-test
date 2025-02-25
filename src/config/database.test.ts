@@ -1,4 +1,4 @@
-import { initializeDB, prisma } from '../../src/config/database';
+import { initializeDB, prisma } from './database';
 
 describe('Database Initialization', () => {
   afterAll(async () => {

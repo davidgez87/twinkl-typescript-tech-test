@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { createUser, getUserById } from '../../src/repositories/userRepository';
-import ApiError from '../../src/errors/apiError';
-import { SignUpPayload } from '../../src/types/request';
+import { createUser, getUserById } from './userRepository';
+import ApiError from '../errors/apiError';
+import { SignUpPayload } from '../types/request';
 
 jest.mock('@prisma/client', () => {
   const mockUser = {

@@ -1,15 +1,15 @@
-import { app, initializeApp } from '../../src/app';
-import { initializeDB } from '../../src/config/database';
-import { startServer } from '../../src/server';
+import { app, initializeApp } from './app';
+import { initializeDB } from './config/database';
+import { startServer } from './server';
 
-jest.mock('../../src/app', () => ({
+jest.mock('./app', () => ({
   app: {
     listen: jest.fn((port: number, callback: Function) => callback()),
   },
   initializeApp: jest.fn(),
 }));
 
-jest.mock('../../src/config/database', () => ({
+jest.mock('./config/database', () => ({
   initializeDB: jest.fn(),
 }));
 
