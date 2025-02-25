@@ -20,6 +20,18 @@ const createUser = async (data: SignUpPayload): Promise<void> => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getAllUsers = async (): Promise<DatabaseResponse[]> => {
+  try {
+    const users = await prisma.user.findMany();
+    console.log('🚀 ~ All Users in DB:', users);
+    return users;
+  } catch (error: any) {
+    console.error('❌ Error fetching all users:', error.message);
+    throw new ApiError(500, 'Error fetching all users');
+  }
+};
+
 const getUserById = async (userId: number): Promise<DatabaseResponse | null> => {
   try {
     return await prisma.user.findUnique({

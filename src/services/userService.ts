@@ -23,7 +23,7 @@ const signUpUserService = async ({
   } catch (error: any) {
     logger.error({ error });
 
-    throw new ApiError(500, error.message);
+    throw new ApiError(error.statusCode, error.message);
   }
 };
 
