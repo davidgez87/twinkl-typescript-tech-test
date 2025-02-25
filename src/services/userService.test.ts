@@ -78,13 +78,11 @@ describe('userDetailsService', () => {
 
     expect(user).toEqual({
       full_name: mockUser.fullName,
-      password: 'Password123',
       email: mockUser.email,
       created_date: mockUser.createdDate,
       user_type: mockUser.userType,
     });
     expect(getUserById).toHaveBeenCalledWith(1);
-    expect(decryptData).toHaveBeenCalledWith(mockUser.password);
   });
 
   it('should throw an ApiError when userRepository.getUserById fails', async () => {

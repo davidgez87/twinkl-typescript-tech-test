@@ -26,7 +26,6 @@ const getUserById = async (userId: number): Promise<DatabaseResponse | null> => 
       where: { userId },
       select: {
         fullName: true,
-        password: true,
         email: true,
         createdDate: true,
         userType: true,

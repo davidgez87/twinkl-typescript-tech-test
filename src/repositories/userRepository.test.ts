@@ -98,7 +98,6 @@ describe('userRepository', () => {
         where: { userId: 1 },
         select: {
           fullName: true,
-          password: true,
           email: true,
           createdDate: true,
           userType: true,
@@ -117,7 +116,6 @@ describe('userRepository', () => {
         where: { userId: 999 },
         select: {
           fullName: true,
-          password: true,
           email: true,
           createdDate: true,
           userType: true,

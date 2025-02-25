@@ -3,7 +3,7 @@ import { SignUpPayload } from '../types/request';
 import { UserDetailsReponse } from '../types/response';
 import ApiError from '../errors/apiError';
 import logger from '../logger/pino';
-import { encryptData, decryptData } from '../utils/encryption';
+import { encryptData } from '../utils/encryption';
 
 const signUpUserService = async ({
   fullName, email, password, createdDate, userType,
@@ -37,7 +37,6 @@ const userDetailsService = async (userId: number): Promise<UserDetailsReponse> =
 
     return {
       full_name: user.fullName,
-      password: decryptData(user.password),
       email: user.email,
       created_date: user.createdDate,
       user_type: user.userType,
