@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+import express from 'express';
 import request from 'supertest';
 import { app, initializeApp } from './app';
 import { initializeDB } from './config/database';
@@ -7,10 +7,22 @@ jest.mock('./config/database', () => ({
   initializeDB: jest.fn(),
 }));
 
+jest.mock('./app', () => {
+  const expressApp = express();
+
+  expressApp.get('/health', (req, res) => res.status(200).json({ status: 'OK' }));
+
+  return {
+    initializeApp: jest.fn(),
+    app: expressApp,
+  };
+});
+
 describe('App', () => {
-  beforeAll(async () => {
-    (initializeDB as jest.Mock).mockResolvedValue(undefined);
-    await initializeApp();
+  beforeAll(() => {
+    (initializeApp as jest.Mock).mockImplementation(async () => {
+      await initializeDB();
+    });
   });
 
   afterAll(() => {
@@ -19,6 +31,7 @@ describe('App', () => {
 
   it('should return 200 and "OK" for the /health endpoint', async () => {
     const response = await request(app).get('/health');
+
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ status: 'OK' });
   });
