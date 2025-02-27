@@ -4,7 +4,6 @@ import { signUpUserService, userDetailsService } from '../services/userService';
 import { SignUpPayload } from '../types/request';
 import ApiError from '../errors/apiError';
 
-// Mock the service functions
 jest.mock('../services/userService', () => ({
   signUpUserService: jest.fn(),
   userDetailsService: jest.fn(),
